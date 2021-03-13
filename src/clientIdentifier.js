@@ -1,14 +1,16 @@
 const MD5 = require('crypto-js/md5');
+const { randomInteger } = require('./utilities');
 
-function randomInteger() {
-    const upperLimit = Math.pow(2, 32);
-    return(Math.round(Math.random()*upperLimit));
+let numberOfClients = 0;
+let clientSalt = MD5(String(randomInteger())).toString().substr(0, 10);
+
+function generateClientIdentifier(generatePassword = true) {
+    const identification = {};
+    identification.id = MD5(numberOfClients + clientSalt).toString().substr(0, 10);
+    if (generatePassword) {
+        identification.password = MD5(String(randomInteger())).toString();
+    }
+    numberOfClients++
+    return(identification);
 }
-
-function generateUniqueIdentifier() {
-    const id = String(randomInteger());
-    const string = MD5(id).toString();
-    return({id, string});
-}
-
-console.log(generateUniqueIdentifier());
+module.exports = {generateClientIdentifier};
