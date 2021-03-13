@@ -1,5 +1,5 @@
 const MD5 = require('crypto-js/md5');
-const { randomInteger } = require('./utilities');
+const { randomInteger } = require('./utilities/utilities');
 
 let numberOfClients = 0;
 let clientSalt = MD5(String(randomInteger())).toString().substr(0, 10);

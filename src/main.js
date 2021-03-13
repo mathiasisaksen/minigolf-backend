@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const { messageHandler } = require('./clientHandler');
+const { messageHandler } = require('./client-handler');
 
 const wss = new WebSocket.Server({
     host: 'localhost', 

@@ -1,4 +1,4 @@
-const { generateClientIdentifier } = require('./clientIdentifier');
+const { generateClientIdentifier } = require('./client-identifier');
 
 const clients = {};
 
