@@ -18,3 +18,4 @@ wss.on('connection', ws => {
     //console.log(wss.clients);
 });
 
+module.exports = { server: wss};

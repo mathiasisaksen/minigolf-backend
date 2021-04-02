@@ -6,8 +6,11 @@ const gameConfig = {
     maxDirectionLineLength: 20,
     framesPerSecond: 60,
     gravity: 9.81,
-
     interpolationsPerStep: 5,
 };
+
+const idConfig = {
+    numberOfCharacters: 12,
+}
 
 module.exports = { gameConfig };

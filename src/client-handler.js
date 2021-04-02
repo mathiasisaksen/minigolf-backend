@@ -1,4 +1,5 @@
-const { generateClientIdentifier } = require('./client-identifier');
+const { generateId } = require('./utilities/id-utilities');
+const { idConfig } = require('./config');
 
 const clients = {};
 
@@ -19,10 +20,9 @@ function messageHandler(message, ws) {
 }
 
 function handleSetup(messageData, ws) {
-    const clientIdentifier = generateClientIdentifier();
+    const clientIdentifier = generateId(idConfig.numberOfCharacters);
     ws.clientId = clientIdentifier.id;
-    ws.clientPassword = clientIdentifier.password;
-    ws.clientName = messageData.name;
+    ws.clientName = messageData.playerName;
     clients[clientIdentifier.id] = ws;
 
     response = {eventType: 'clientIdentification', data: clientIdentifier};

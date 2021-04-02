@@ -99,7 +99,7 @@ const GameMechanics = function(golfBall, course) {
         }
     }
 
-    function computePosition() {
+    function computePuttResult() {
         isRunning = true;
         while (isRunning) {
             multipleSteps(1 / gameConfig.framesPerSecond, gameConfig.interpolationsPerStep);
@@ -136,7 +136,7 @@ const GameMechanics = function(golfBall, course) {
         isRunning = false;
     }
 
-    return({ computePosition });
+    return({ computePuttResult });
 }
 
 module.exports = GameMechanics;
