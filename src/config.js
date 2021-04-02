@@ -13,4 +13,8 @@ const idConfig = {
     numberOfCharacters: 12,
 }
 
-module.exports = { gameConfig, idConfig };
+const serverConfig = {
+    port: 5600
+}
+
+module.exports = { gameConfig, idConfig, serverConfig };

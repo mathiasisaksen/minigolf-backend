@@ -20,6 +20,7 @@ function handleNewOnlineGame(webSocket, data) {
         const player = ServerState.addPlayer(playerId, playerName, webSocket);
 
         gameId = isGameIdSpecified ? gameId : generateId(idConfig.numberOfCharacters);
+        gameId = gameId.toLowerCase();
         const onlineGame = ServerState.addGame(gameId);
 
         onlineGame.addPlayer(player);

@@ -1,11 +1,12 @@
 const ServerState = require("../server-state");
-const { generateId, checkValidId } = require('../utilities/client-utilities')
+const { generateId } = require('../utilities/client-utilities')
 const { idConfig } = require('../config');
 
 function handleJoinRequest(webSocket, data) {
     const response = {data: {}};
     const playerName = data.playerName;
-    const onlineGame = ServerState.getGameById(data.gameId);
+    const gameId = data.gameId.toLowerCase();
+    const onlineGame = ServerState.getGameById(gameId);
 
     response.eventName = 'joinRequestFailed';
     if (!onlineGame) {

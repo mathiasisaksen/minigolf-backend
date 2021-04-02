@@ -1,9 +1,10 @@
+
 const WebSocket = require('ws');
+const { serverConfig } = require('./config');
 const { messageHandler } = require('./message-handler');
 
 const wss = new WebSocket.Server({
-    host: 'localhost', 
-    port: 5600, 
+    port: serverConfig.port, 
     clientTracking: true
 });
 
@@ -16,7 +17,6 @@ wss.on('connection', ws => {
 
 process.on('uncaughtException', function (err) {
     console.trace(err.stack);
-    console.log("Node NOT Exiting...");
-  });
+});
 
 module.exports = { server: wss };
