@@ -13,4 +13,4 @@ const idConfig = {
     numberOfCharacters: 12,
 }
 
-module.exports = { gameConfig };
+module.exports = { gameConfig, idConfig };

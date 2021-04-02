@@ -1,9 +1,9 @@
-const { GenerateCourse } = require('../minigolf-components/course-generation');
+const { generateCourse } = require('../minigolf-components/course-generation');
 const GameMechanics = require('../minigolf-components/game-mechanics');
 const Course = require('../minigolf-components/course');
 const GolfBall = require('../minigolf-components/golf-ball');
 
-function MultiplayerGame() {
+function OnlineGame() {
     const players = [];
     const scoreBoard = {};
     let currentPlayer;
@@ -12,15 +12,26 @@ function MultiplayerGame() {
     let golfBall;
     let gameMechanics;
 
+    generateNewCourse();
+
     function addPlayer(player) {
+        const message = {data: {}};
+        message.eventName = 'playerJoined';
+        message.data.playerName = player.getName();
+        broadcast(JSON.stringify(message));
+
         players.push(player);
-        // TODO: WS call to other clients
     }
     function removePlayer(player) {
         const index = players.findIndex(elem => elem.getId() === player.getId());
         if (index === -1) return;
         players.splice(index, 1);
-        // TODO: WS call to other clients
+
+        const message = {data: {}};
+        message.eventName = 'playerLeft';
+        message.data.playerName = player.getName();
+        broadcast(JSON.stringify(message));
+        // TODO: If last player leaves, dispose of game in ServerState
     }
 
     function getCourseData() {
@@ -28,7 +39,7 @@ function MultiplayerGame() {
     }
 
     function generateNewCourse() {
-        courseData = GenerateCourse();
+        courseData = generateCourse();
         course = Course(courseData);
         golfBall = GolfBall(courseData);
         gameMechanics = GameMechanics(golfBall, course);
@@ -58,6 +69,17 @@ function MultiplayerGame() {
         return(data);
     }
 
+    function removeGame() {
+        // TODO
+    }
+
+    function broadcast(message) {
+        players.forEach(player => player.sendMessage(message));
+    }
+
     return({addPlayer, removePlayer, getCourseData, generateNewCourse,
-        computePuttResult, isPlayerNameInUse, getGameData})
+        computePuttResult, isPlayerNameInUse, getGameData, removeGame,
+        broadcast})
 }
+
+module.exports = OnlineGame;
