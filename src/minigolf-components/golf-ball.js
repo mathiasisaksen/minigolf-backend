@@ -38,15 +38,18 @@ const GolfBall = function(courseData) {
         let newPosition = position;
         newPosition.setX(newPosition.getX() + stepSize*_unitDirectionVector.getX());
         newPosition.setY(newPosition.getY() + stepSize*_unitDirectionVector.getY());
-        //console.log(newPosition.getString());
         setPosition(newPosition);
+    }
+
+    function moveToInitialPosition() {
+        position = mUtils.Vector(courseData.initialGolfBallPosition);
     }
 
     return({
         getPosition, setPosition, 
-        getSpeed, setSpeed,
-        getDirection, setDirection, step})
-
+        getSpeed, setSpeed, getDirection, 
+        setDirection, step, moveToInitialPosition
+    });
 }
 
 module.exports = GolfBall;

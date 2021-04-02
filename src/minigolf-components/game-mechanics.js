@@ -104,17 +104,8 @@ const GameMechanics = function(golfBall, course) {
         while (isRunning) {
             multipleSteps(1 / gameConfig.framesPerSecond, gameConfig.interpolationsPerStep);
         }
-
         reset();
         return({position: golfBall.getPosition(), isFinished});
-    }
-
-    function enableRunning() {
-        isRunning = true;
-    }
-
-    function checkIfRunning() {
-        return(isRunning);
     }
 
     function checkIfWon() {

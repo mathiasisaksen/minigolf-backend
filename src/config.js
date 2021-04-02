@@ -5,7 +5,7 @@ const gameConfig = {
     speedThreshold: 0.5,
     maxDirectionLineLength: 20,
     framesPerSecond: 60,
-    gravity: 9.81,
+    gravity: Infinity,
     interpolationsPerStep: 5,
 };
 

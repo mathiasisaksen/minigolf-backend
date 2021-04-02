@@ -1,27 +1,30 @@
+const Player = require("./online-game/player");
 
 const ServerState = (() => {
-    const players = [];
-    const playerIdSocketMap = {};
-    const playerIdNameMap = {};
-
+    const players = {};
     const onlineGames = {};
 
     function addPlayer(id, name, socket) {
-        players.push(id);
-        playerIdSocketMap[id] = socket;
-        playerIdNameMap[id] = name;
+        const newPlayer = Player(id, name, socket);
+        players.push(newPlayer);
+        return(newPlayer);
     }
 
     function removePlayer(id) {
-        const playerIndex = players.findIndex(elem => elem == id);
-        if (playerIndex === -1) return;
-
-        players.splice(playerIndex, 1);
-        playerIdSocketMap[id].close();
-        playerIdSocketMap[id] = null
+        if (!players[id]) return(false);
+        players[id].removePlayer();
+        players[id] = null;
     }
 
-    return({ addPlayer })
+    function getGameById(gameId) {
+        return(onlineGames[gameId]);
+    }
+
+    function getPlayerById(playerId) {
+        return(players[playerId]);
+    }
+
+    return({ addPlayer, removePlayer, getGameById, getPlayerById })
 })();
 
 module.exports = ServerState;

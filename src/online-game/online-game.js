@@ -4,8 +4,7 @@ const Course = require('../minigolf-components/course');
 const GolfBall = require('../minigolf-components/golf-ball');
 
 function MultiplayerGame() {
-    const players = {};
-    const playerOrder = [];
+    const players = [];
     const scoreBoard = {};
     let currentPlayer;
     let courseData;
@@ -14,13 +13,13 @@ function MultiplayerGame() {
     let gameMechanics;
 
     function addPlayer(player) {
-        players[player.clientId] = player;
-        playerOrder.push(player.clientId);
+        players.push(player);
         // TODO: WS call to other clients
     }
     function removePlayer(player) {
-        delete players[player.clientId];
-        playerOrder = playerOrder.filter(id => id != player.clientId);
+        const index = players.findIndex(elem => elem.getId() === player.getId());
+        if (index === -1) return;
+        players.splice(index, 1);
         // TODO: WS call to other clients
     }
 
@@ -43,4 +42,22 @@ function MultiplayerGame() {
         // putt. The position is shared and each client updates
         // based on it
     }
+
+    function getPlayerNames() {
+        return(players.map(player => player.getName()));
+    }
+
+    function isPlayerNameInUse(playerName) {
+        return(getPlayerNames().includes(playerName));
+    }
+
+    function getGameData() {
+        const data = {};
+        data.playerNames = getPlayerNames();
+        data.courseData = courseData;
+        return(data);
+    }
+
+    return({addPlayer, removePlayer, getCourseData, generateNewCourse,
+        computePuttResult, isPlayerNameInUse, getGameData})
 }
