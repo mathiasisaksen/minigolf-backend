@@ -13,8 +13,12 @@ const idConfig = {
     numberOfCharacters: 12,
 }
 
+const playerConfig = {
+    maxNameLength: 20
+}
+
 const serverConfig = {
     port: 5600
 }
 
-module.exports = { gameConfig, idConfig, serverConfig };
+module.exports = { gameConfig, idConfig, serverConfig, playerConfig };

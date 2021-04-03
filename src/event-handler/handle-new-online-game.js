@@ -1,7 +1,6 @@
 const ServerState = require("../server-state");
 const { generateId, checkValidId } = require('../utilities/client-utilities')
-const { idConfig } = require('../config');
-const OnlineGame = require("../online-game/online-game");
+const { idConfig, playerConfig } = require('../config');
 
 function handleNewOnlineGame(webSocket, data) {
     const response = {data: {}};
@@ -9,8 +8,12 @@ function handleNewOnlineGame(webSocket, data) {
     let gameId = data.gameId;
     const isGameIdSpecified = data.isGameIdSpecified;
 
-    response.eventName = 'gameCreationFailed';   
-    if (isGameIdSpecified && !checkValidId(gameId)) {
+    response.eventName = 'gameCreationFailed';
+    if (!playerName) {
+        response.data.errorDescription = 'Please enter a name';
+    } else if (playerName.length > playerConfig.maxNameLength) {
+        response.data.errorDescription = 'The name is too long';
+    } else if (isGameIdSpecified && !checkValidId(gameId)) {
         response.data.errorDescription = 'Invalid game ID';        
     } else if (isGameIdSpecified && ServerState.isGameIdInUse(gameId)) {
         response.data.errorDescription = 'Game ID already in use';

@@ -1,6 +1,6 @@
 const ServerState = require("../server-state");
 const { generateId } = require('../utilities/client-utilities')
-const { idConfig } = require('../config');
+const { idConfig, playerConfig } = require('../config');
 
 function handleJoinRequest(webSocket, data) {
     const response = {data: {}};
@@ -9,10 +9,14 @@ function handleJoinRequest(webSocket, data) {
     const onlineGame = ServerState.getGameById(gameId);
 
     response.eventName = 'joinRequestFailed';
-    if (!onlineGame) {
+    if (!playerName) {
+        response.data.errorDescription = 'Please enter a name';
+    } else if (playerName.length > playerConfig.maxNameLength) {
+        response.data.errorDescription = 'The name is too long';
+    } else if (!onlineGame) {
         response.data.errorDescription = 'Game not found';
     } else if (onlineGame.isPlayerNameInUse(playerName)) {
-        response.data.errorDescription = 'Username already in use';
+        response.data.errorDescription = 'Player name already in use';
     } else {
         response.eventName = 'joinRequestSuccessful';
         
