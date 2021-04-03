@@ -6,27 +6,25 @@ const ServerState = (() => {
     const onlineGames = {};
 
     function createPlayer(id, name, socket) {
-        const newPlayer = Player(id, name, socket);
+        const newPlayer = Player(id, name, socket, removePlayer);
         players[id] = newPlayer;
         return(newPlayer);
     }
 
     function removePlayer(id) {
         if (!(id in players)) return(false);
-        players[id].removePlayer();
-        players[id] = null;
+        delete players[id];
     }
 
     function createGame(gameId) {
-        const newGame = OnlineGame();
+        const newGame = OnlineGame(gameId, removeGame);
         onlineGames[gameId] = newGame;
         return(newGame);
     }
 
     function removeGame(gameId) {
         if (!(gameId in onlineGames)) return;
-        onlineGames[gameId].removeGame();
-        onlineGames[gameId] = null;
+        delete onlineGames[gameId];
     }
 
     function getGameById(gameId) {
@@ -41,8 +39,8 @@ const ServerState = (() => {
         return(gameId in onlineGames);
     }
 
-    return({ addPlayer: createPlayer, removePlayer, getGameById, getPlayerById, 
-        isGameIdInUse, addGame: createGame });
+    return({ createPlayer, removePlayer, getGameById, getPlayerById, 
+        isGameIdInUse, createGame, removeGame });
 })();
 
 module.exports = ServerState;

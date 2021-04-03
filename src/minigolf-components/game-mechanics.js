@@ -6,8 +6,8 @@ const GameMechanics = function(golfBall, course) {
     // Create array of edges from both boundary and inner obstacles
     const edges = course.getEdges();
     const hole = course.getHole();
-    const upperPutVelocity = Math.sqrt(gameConfig.gravity / (2*gameConfig.golfBallRadius)) *
-        (2*hole.radius - gameConfig.golfBallRadius);
+    const upperPutVelocity = Math.sqrt(gameConfig.gravity / (2*golfBall.getRadius())) *
+        (2*hole.radius - golfBall.getRadius());
 
     let collisionData;
     let isRunning = false;
@@ -19,7 +19,7 @@ const GameMechanics = function(golfBall, course) {
         const directionVector = mUtils.createUnitVector(golfBallDirection);
         const golfBallPath = mUtils.Path(golfBallPosition, directionVector);
         // Paths that outline the extent covered by the motion of the golf ball
-        const outerPaths = mUtils.getParallelPaths(golfBallPath, gameConfig.golfBallRadius);
+        const outerPaths = mUtils.getParallelPaths(golfBallPath, golfBall.getRadius());
         
         // collisionData contains four properties: "Time" of collision (based
         // on unit vector, not actual time), location of collision, center of
@@ -37,7 +37,7 @@ const GameMechanics = function(golfBall, course) {
                 if (canCollide) {
                     // Compute collision
                     const collisionData = mUtils.computeMovingCircleEdgeIntersection(
-                        golfBallPath, gameConfig.golfBallRadius, edge);
+                        golfBallPath, golfBall.getRadius(), edge);
                     if (collisionData.time < earliestCollisionData.time) {
                         earliestCollisionData = collisionData;
                     }
@@ -95,7 +95,6 @@ const GameMechanics = function(golfBall, course) {
         for (let i = 0; i < numberOfSteps; i++) {
             if (!isRunning) return;
             step(timeStep / numberOfSteps);
-            //console.log(golfBall.getPosition().getString())
         }
     }
 
@@ -105,7 +104,7 @@ const GameMechanics = function(golfBall, course) {
             multipleSteps(1 / gameConfig.framesPerSecond, gameConfig.interpolationsPerStep);
         }
         reset();
-        return({position: golfBall.getPosition(), isFinished});
+        return({finalPosition: golfBall.getPosition().getCoordinates(), isFinished});
     }
 
     function checkIfWon() {

@@ -14,11 +14,11 @@ const idConfig = {
 }
 
 const playerConfig = {
-    maxNameLength: 20
+    maxNameLength: 20,
 }
 
 const serverConfig = {
-    port: 5600
+    port: 5600,
 }
 
 module.exports = { gameConfig, idConfig, serverConfig, playerConfig };

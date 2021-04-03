@@ -1,3 +1,4 @@
+const { gameConfig } = require('../config');
 const mUtils = require('../utilities/math-utilities');
 
 const GolfBall = function(courseData) {
@@ -5,8 +6,8 @@ const GolfBall = function(courseData) {
     let position = mUtils.Vector(courseData.initialGolfBallPosition);
     let speed;
     let direction;
+    let radius = courseData.golfBallRadius || gameConfig.golfBallRadius;
     let _unitDirectionVector;
-
 
     function getPosition() {
         return(position);
@@ -33,6 +34,14 @@ const GolfBall = function(courseData) {
         _unitDirectionVector = mUtils.createUnitVector(direction)
     }
 
+    function getRadius() {
+        return(radius);
+    }
+
+    function setRadius(newRadius) {
+        radius = newRadius;
+    }
+
     function step(timeStep) {
         const stepSize = speed*timeStep;
         let newPosition = position;
@@ -47,8 +56,10 @@ const GolfBall = function(courseData) {
 
     return({
         getPosition, setPosition, 
-        getSpeed, setSpeed, getDirection, 
-        setDirection, step, moveToInitialPosition
+        getSpeed, setSpeed,
+        getDirection, setDirection,
+        getRadius, setRadius, 
+        step, moveToInitialPosition
     });
 }
 

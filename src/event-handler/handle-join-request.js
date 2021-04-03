@@ -21,7 +21,7 @@ function handleJoinRequest(webSocket, data) {
         response.eventName = 'joinRequestSuccessful';
         
         const playerId = generateId(idConfig.numberOfCharacters);
-        const player = ServerState.addPlayer(playerId, playerName, webSocket);
+        const player = ServerState.createPlayer(playerId, playerName, webSocket);
         onlineGame.addPlayer(player);
         player.setOnlineGame(onlineGame);
         

@@ -1,8 +1,9 @@
 
-function Player(id, name, webSocket) {
+function Player(id, name, webSocket, removeCallback) {
     let playerId = id;
     let playerName = name;
     let socket = webSocket;
+    socket.on('close', handleSocketClose);
 
     let onlineGame;
 
@@ -22,17 +23,19 @@ function Player(id, name, webSocket) {
         socket.send(message);
     }
 
-    function removePlayer() {
-        onlineGame.leave(playerId);
-        // TODO
-    }
-
     function setOnlineGame(game) {
         onlineGame = game;
     }
 
-    return({ getId, getName, getSocket, sendMessage, removePlayer,
-        setOnlineGame});
+    function handleSocketClose() {
+        onlineGame.removePlayer(player);
+        removeCallback(playerId);
+    }
+
+    const player = 
+    { getId, getName, getSocket, sendMessage,
+        setOnlineGame};
+    return(player);
 }
 
 module.exports = Player;

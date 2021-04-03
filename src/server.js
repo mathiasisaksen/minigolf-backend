@@ -1,4 +1,3 @@
-
 const WebSocket = require('ws');
 const { serverConfig } = require('./config');
 const { messageHandler } = require('./message-handler');

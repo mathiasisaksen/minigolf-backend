@@ -20,13 +20,14 @@ function handleNewOnlineGame(webSocket, data) {
     } else {
         response.eventName = 'gameCreationSuccessful';
         const playerId = generateId(idConfig.numberOfCharacters);
-        const player = ServerState.addPlayer(playerId, playerName, webSocket);
+        const player = ServerState.createPlayer(playerId, playerName, webSocket);
 
         gameId = isGameIdSpecified ? gameId : generateId(idConfig.numberOfCharacters);
         gameId = gameId.toLowerCase();
-        const onlineGame = ServerState.addGame(gameId);
+        const onlineGame = ServerState.createGame(gameId);
 
         onlineGame.addPlayer(player);
+        onlineGame.setCurrentPlayer(player);
         player.setOnlineGame(onlineGame);
 
         response.data = onlineGame.getGameData();
