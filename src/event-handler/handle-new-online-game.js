@@ -39,6 +39,7 @@ function handleNewOnlineGame(webSocket, data) {
         response.data.playerId = playerId;
         response.data.gameId = gameId;
         response.data.currentPlayer = playerName;
+        response.data.courseName = 1;
     }
     webSocket.send(JSON.stringify(response));
 }

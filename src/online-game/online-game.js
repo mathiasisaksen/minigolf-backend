@@ -2,10 +2,11 @@ const { generateCourse } = require('../minigolf-components/course-generation');
 const GameMechanics = require('../minigolf-components/game-mechanics');
 const Course = require('../minigolf-components/course');
 const GolfBall = require('../minigolf-components/golf-ball');
+const ScoreBoard = require('./score-board');
 
 function OnlineGame(gameId, removeCallback) {
     const players = [];
-    const scoreBoard = {};
+    const scoreBoard = ScoreBoard();
     let isGameFinished = false;
     let currentCourseNumber = 0;
     let totalNumberOfCourses;
@@ -52,6 +53,7 @@ function OnlineGame(gameId, removeCallback) {
             if (isNewCourse) {
                 data.isNewCourse = true;
                 data.newCourseData = courseData;
+                data.newCourseName = currentCourseNumber;
             } else {
                 data.isNewCourse = false;
                 golfBall.reset();
@@ -108,8 +110,9 @@ function OnlineGame(gameId, removeCallback) {
         // TODO: WS call to all clients
     }
 
-
     function computePuttResult() {
+        const currentPlayer = players[currentPlayerIndex];
+        scoreBoard.incrementPlayerScore(currentCourseNumber, currentPlayer.getName());
         const puttResult = gameMechanics.computePuttResult();
         if (puttResult.isFinished) {
             goToNextPlayer();
@@ -117,6 +120,7 @@ function OnlineGame(gameId, removeCallback) {
             if (currentPlayerIndex === 0 && !isGameFinished) {
                 puttResult.isNewCourse = true;
                 puttResult.newCourseData = courseData;
+                puttResult.newCourseName = currentCourseNumber;
             } else {
                 puttResult.isNewCourse = false;
             }
@@ -125,7 +129,6 @@ function OnlineGame(gameId, removeCallback) {
             puttResult.isGameFinished = false;
         }
 
-        console.log(currentPlayerIndex, currentCourseNumber, isGameFinished);
         puttResult.isGameFinished = isGameFinished;
         return(puttResult);
         // If puttResult.isFinished is true, go to next player
@@ -147,7 +150,6 @@ function OnlineGame(gameId, removeCallback) {
         data.playerNames = getPlayerNames();
         data.currentPlayer = players[currentPlayerIndex].getName();
         data.courseData = courseData;
-        data.scoreBoard = scoreBoard;
         data.golfBallPosition = golfBall.getPosition().getCoordinates();
         return(data);
     }
@@ -161,12 +163,21 @@ function OnlineGame(gameId, removeCallback) {
         players.forEach(player => player.sendMessage(message));
     }
 
+    function getCourseNumber() {
+        return(currentCourseNumber);
+    }
+
+    function getScoreArray() {
+        return(scoreBoard.getScoreArray());
+    }
+
     const game = { getId, 
         addPlayer, removePlayer, 
         getCourseData, generateNewCourse,
         computePuttResult, isPlayerNameInUse, getGameData,
         broadcast, setCurrentPlayer, setGolfBallVelocity,
-        setNumberOfCourses, getCurrentPlayer };
+        setNumberOfCourses, getCurrentPlayer, getCourseNumber,
+        getScoreArray };
     return(game)
 }
 

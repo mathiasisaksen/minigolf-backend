@@ -28,6 +28,8 @@ function handleJoinRequest(webSocket, data) {
         response.data = onlineGame.getGameData();
         response.data.playerId = playerId;
         response.data.gameId = gameId;
+        response.data.courseName = onlineGame.getCourseNumber();
+        response.data.scoreArray = onlineGame.getScoreArray();
     }
     webSocket.send(JSON.stringify(response));
 }
