@@ -103,8 +103,9 @@ const GameMechanics = function(golfBall, course) {
         while (isRunning) {
             multipleSteps(1 / gameConfig.framesPerSecond, gameConfig.interpolationsPerStep);
         }
+        const result = {finalPosition: golfBall.getPosition().getCoordinates(), isFinished};
         reset();
-        return({finalPosition: golfBall.getPosition().getCoordinates(), isFinished});
+        return(result);
     }
 
     function checkIfWon() {
@@ -115,6 +116,7 @@ const GameMechanics = function(golfBall, course) {
         const speed = golfBall.getSpeed();
         if (mUtils.subtractVectors(position, hole.position).getLength() <= hole.radius &&
                                                             speed < upperPutVelocity) {
+
             golfBall.setPosition(hole.position);
             isRunning = false;
             isFinished = true;
@@ -124,6 +126,7 @@ const GameMechanics = function(golfBall, course) {
     function reset() {
         collisionData = null;
         isRunning = false;
+        isFinished = false;
     }
 
     return({ computePuttResult });

@@ -7,6 +7,7 @@ function handleNewOnlineGame(webSocket, data) {
     const playerName = data.playerName;
     let gameId = data.gameId;
     const isGameIdSpecified = data.isGameIdSpecified;
+    let numberOfCourses = data.numberOfCourses;
 
     response.eventName = 'gameCreationFailed';
     if (!playerName) {
@@ -17,22 +18,27 @@ function handleNewOnlineGame(webSocket, data) {
         response.data.errorDescription = 'Invalid game ID';        
     } else if (isGameIdSpecified && ServerState.isGameIdInUse(gameId)) {
         response.data.errorDescription = 'Game ID already in use';
+    } else if (!numberOfCourses || numberOfCourses < 1) {
+        response.data.errorDescription = 'Invalid number of holes';
     } else {
         response.eventName = 'gameCreationSuccessful';
         const playerId = generateId(idConfig.numberOfCharacters);
         const player = ServerState.createPlayer(playerId, playerName, webSocket);
-
         gameId = isGameIdSpecified ? gameId : generateId(idConfig.numberOfCharacters);
         gameId = gameId.toLowerCase();
         const onlineGame = ServerState.createGame(gameId);
 
         onlineGame.addPlayer(player);
         onlineGame.setCurrentPlayer(player);
+        onlineGame.generateNewCourse();
         player.setOnlineGame(onlineGame);
+
+        onlineGame.setNumberOfCourses(numberOfCourses);
 
         response.data = onlineGame.getGameData();
         response.data.playerId = playerId;
         response.data.gameId = gameId;
+        response.data.currentPlayer = playerName;
     }
     webSocket.send(JSON.stringify(response));
 }

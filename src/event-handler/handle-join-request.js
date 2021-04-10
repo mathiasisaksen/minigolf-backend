@@ -27,6 +27,7 @@ function handleJoinRequest(webSocket, data) {
         
         response.data = onlineGame.getGameData();
         response.data.playerId = playerId;
+        response.data.gameId = gameId;
     }
     webSocket.send(JSON.stringify(response));
 }

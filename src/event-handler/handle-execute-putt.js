@@ -1,3 +1,4 @@
+const { gameConfig } = require("../config");
 const OnlineGame = require("../online-game/online-game");
 const ServerState = require("../server-state");
 
@@ -5,13 +6,22 @@ const ServerState = require("../server-state");
 function handleExecutePutt(webSocket, data) {
     const message = {data: {}};
 
-    const playerId = data.playerId;
     const gameId = data.gameId.toLowerCase();
-    const speed = data.golfBallSpeed;
+    const onlineGame = ServerState.getGameById(gameId);
+    const currentPlayer =  onlineGame.getCurrentPlayer();
+
+    const playerId = data.playerId;
+    if (currentPlayer.getId() !== playerId) {
+        message.eventName = 'generalError';
+        message.data.errorDescription = 'Putt was performed by wrong player';
+        webSocket.send(JSON.stringify(message));
+        return;
+    }
+
+    const speed = Math.min(data.golfBallSpeed, gameConfig.maxSpeed);
     const direction = data.golfBallDirection;
 
     const player = ServerState.getPlayerById(playerId);
-    const onlineGame = ServerState.getGameById(gameId);
     onlineGame.setGolfBallVelocity(speed, direction);
     const puttResult = onlineGame.computePuttResult();
     

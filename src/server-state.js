@@ -11,8 +11,11 @@ const ServerState = (() => {
         return(newPlayer);
     }
 
-    function removePlayer(id) {
+    function removePlayer(player) {
+        const id = player.getId();
         if (!(id in players)) return(false);
+        const onlineGame = player.getOnlineGame();
+        onlineGame.removePlayer(player);
         delete players[id];
     }
 
@@ -22,7 +25,8 @@ const ServerState = (() => {
         return(newGame);
     }
 
-    function removeGame(gameId) {
+    function removeGame(game) {
+        const gameId = game.getId();
         if (!(gameId in onlineGames)) return;
         delete onlineGames[gameId];
     }

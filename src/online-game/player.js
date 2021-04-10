@@ -27,14 +27,17 @@ function Player(id, name, webSocket, removeCallback) {
         onlineGame = game;
     }
 
+    function getOnlineGame() {
+        return(onlineGame);
+    }
+
     function handleSocketClose() {
-        onlineGame.removePlayer(player);
-        removeCallback(playerId);
+        removeCallback(player);
     }
 
     const player = 
     { getId, getName, getSocket, sendMessage,
-        setOnlineGame};
+        setOnlineGame, getOnlineGame };
     return(player);
 }
 

@@ -54,12 +54,18 @@ const GolfBall = function(courseData) {
         position = mUtils.Vector(courseData.initialGolfBallPosition);
     }
 
+    function reset() {
+        moveToInitialPosition();
+        setSpeed(0);
+        setDirection(0);
+    }
+
     return({
         getPosition, setPosition, 
         getSpeed, setSpeed,
         getDirection, setDirection,
         getRadius, setRadius, 
-        step, moveToInitialPosition
+        step, moveToInitialPosition, reset
     });
 }
 

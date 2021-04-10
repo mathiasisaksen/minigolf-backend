@@ -6,13 +6,17 @@ const GolfBall = require('../minigolf-components/golf-ball');
 function OnlineGame(gameId, removeCallback) {
     const players = [];
     const scoreBoard = {};
+    let isGameFinished = false;
+    let currentCourseNumber = 0;
+    let totalNumberOfCourses;
     let currentPlayerIndex;
     let courseData;
     let course;
     let golfBall;
-    let gameMechanics;
 
-    generateNewCourse();
+    function getId() {
+        return(gameId);
+    }
 
     function addPlayer(player) {
         const message = {data: {}};
@@ -24,25 +28,40 @@ function OnlineGame(gameId, removeCallback) {
     }
 
     function removePlayer(player) {
-        const index = players.findIndex(elem => elem.getId() === player.getId());
-        if (index === -1) return;
-        const currentPlayerLeft = (player == players[currentPlayerIndex]);
-        players.splice(index, 1);
-        
-        // When last player leaves, remove game
-        if (players.length === 0) {
-            removeCallback(gameId);
-            return;
+        const removeIndex = players.findIndex(elem => elem.getId() === player.getId());
+        if (removeIndex === -1) return;
+
+        const isNewCourse = (removeIndex === players.length - 1);
+        let currentPlayerLeft = false;
+        if (removeIndex <= currentPlayerIndex) {
+            currentPlayerLeft = (removeIndex === currentPlayerIndex);
+            currentPlayerIndex--;
         }
 
-        const message = {data: {}};
-        message.eventName = 'playerLeft';
-        message.data.playerName = player.getName();
-        message.data.currentPlayerLeft = currentPlayerLeft;
-        if (currentPlayerLeft) {        
-            currentPlayerIndex %= players.length;
-            message.data.newCurrentPlayerName = players[currentPlayerIndex].getName();
+        players.splice(removeIndex, 1);
+        
+        const message = {};
+        const data = {};
+        // When last player leaves, remove game
+        if (players.length === 0) {
+            removeCallback(game);
+            return;
+        } else if (currentPlayerLeft) {
+            goToNextPlayer();
+            data.newCurrentPlayerName = players[currentPlayerIndex].getName();
+            if (isNewCourse) {
+                data.isNewCourse = true;
+                data.newCourseData = courseData;
+            } else {
+                data.isNewCourse = false;
+                golfBall.reset();
+            }
         }
+
+        message.eventName = 'playerLeft';
+        data.playerName = player.getName();
+        data.currentPlayerLeft = currentPlayerLeft;
+        message.data = data;
 
         broadcast(JSON.stringify(message));
     }
@@ -53,13 +72,23 @@ function OnlineGame(gameId, removeCallback) {
         currentPlayerIndex = index;
     }
 
+    function getCurrentPlayer() {
+        return(players[currentPlayerIndex]);
+    }    
+
     function goToNextPlayer() {
         currentPlayerIndex++;
-        if (currentPlayerIndex === player.length) {
+        if (currentPlayerIndex === players.length) {
             currentPlayerIndex = 0;
             generateNewCourse();
+        } else {
+            golfBall.moveToInitialPosition();
         }
 
+    }
+
+    function setNumberOfCourses(number) {
+        totalNumberOfCourses = number;
     }
 
     function getCourseData() {
@@ -67,6 +96,11 @@ function OnlineGame(gameId, removeCallback) {
     }
 
     function generateNewCourse() {
+        currentCourseNumber++;
+        if (currentCourseNumber > totalNumberOfCourses) {
+            isGameFinished = true;
+            return;
+        }
         courseData = generateCourse();
         course = Course(courseData);
         golfBall = GolfBall(courseData);
@@ -74,19 +108,25 @@ function OnlineGame(gameId, removeCallback) {
         // TODO: WS call to all clients
     }
 
+
     function computePuttResult() {
         const puttResult = gameMechanics.computePuttResult();
         if (puttResult.isFinished) {
             goToNextPlayer();
             puttResult.nextPlayer = players[currentPlayerIndex].getName();
+            if (currentPlayerIndex === 0 && !isGameFinished) {
+                puttResult.isNewCourse = true;
+                puttResult.newCourseData = courseData;
+            } else {
+                puttResult.isNewCourse = false;
+            }
+        } else {
+            puttResult.isNewCourse = false;
+            puttResult.isGameFinished = false;
         }
 
-        // 
-        if (currentPlayerIndex === 0) {
-            puttResult.isNewCourse = true;
-            puttResult.newCourseData = courseData;
-        }
-
+        console.log(currentPlayerIndex, currentCourseNumber, isGameFinished);
+        puttResult.isGameFinished = isGameFinished;
         return(puttResult);
         // If puttResult.isFinished is true, go to next player
         // and share with clients. If not, let player do next
@@ -121,9 +161,13 @@ function OnlineGame(gameId, removeCallback) {
         players.forEach(player => player.sendMessage(message));
     }
 
-    return({addPlayer, removePlayer, getCourseData, generateNewCourse,
+    const game = { getId, 
+        addPlayer, removePlayer, 
+        getCourseData, generateNewCourse,
         computePuttResult, isPlayerNameInUse, getGameData,
-        broadcast, setGolfBallVelocity, setCurrentPlayer, setGolfBallVelocity })
+        broadcast, setCurrentPlayer, setGolfBallVelocity,
+        setNumberOfCourses, getCurrentPlayer };
+    return(game)
 }
 
 module.exports = OnlineGame;
