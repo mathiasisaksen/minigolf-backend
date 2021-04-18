@@ -93,6 +93,10 @@ function OnlineGame(gameId, removeCallback) {
         totalNumberOfCourses = number;
     }
 
+    function getNumberOfCourses() {
+        return(totalNumberOfCourses);
+    }
+
     function getCourseData() {
         return(courseData);
     }
@@ -177,7 +181,7 @@ function OnlineGame(gameId, removeCallback) {
         computePuttResult, isPlayerNameInUse, getGameData,
         broadcast, setCurrentPlayer, setGolfBallVelocity,
         setNumberOfCourses, getCurrentPlayer, getCourseNumber,
-        getScoreArray };
+        getScoreArray, getNumberOfCourses };
     return(game)
 }
 

@@ -29,7 +29,9 @@ function handleJoinRequest(webSocket, data) {
         response.data.playerId = playerId;
         response.data.gameId = gameId;
         response.data.courseName = onlineGame.getCourseNumber();
+        response.data.courseNumber = onlineGame.getCourseNumber();
         response.data.scoreArray = onlineGame.getScoreArray();
+        response.data.numberOfCourses = onlineGame.getNumberOfCourses();
     }
     webSocket.send(JSON.stringify(response));
 }

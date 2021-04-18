@@ -40,6 +40,8 @@ function handleNewOnlineGame(webSocket, data) {
         response.data.gameId = gameId;
         response.data.currentPlayer = playerName;
         response.data.courseName = 1;
+        response.data.numberOfCourses = numberOfCourses;
+
     }
     webSocket.send(JSON.stringify(response));
 }

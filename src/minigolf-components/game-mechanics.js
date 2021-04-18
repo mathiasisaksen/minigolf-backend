@@ -26,19 +26,16 @@ const GameMechanics = function(golfBall, course) {
         // golf ball at collision, and direction of golf ball after collision
         let earliestCollisionData = {time: Infinity};
         for (const edge of edges) {
-            const interSectionA = mUtils.computePathEdgeIntersection(outerPaths.pathA, edge);
-            const interSectionB = mUtils.computePathEdgeIntersection(outerPaths.pathB, edge);
-            if (interSectionA && interSectionB) {
-                const canCollide = 
-                    (mUtils.isInRange(interSectionA.edgeParameter, 0, 1) && 
-                    mUtils.isInRange(interSectionA.pathParameter, 0, Infinity)) ||
-                    (mUtils.isInRange(interSectionB.edgeParameter, 0, 1) && 
-                    mUtils.isInRange(interSectionB.pathParameter, 0, Infinity))
+            const intersectionA = mUtils.computePathEdgeIntersection(outerPaths.pathA, edge);
+            const intersectionB = mUtils.computePathEdgeIntersection(outerPaths.pathB, edge);
+            if (intersectionA && intersectionB) {
+                const canCollide = checkIfCollisionCanHappen(intersectionA, intersectionB);
                 if (canCollide) {
                     // Compute collision
                     const collisionData = mUtils.computeMovingCircleEdgeIntersection(
                         golfBallPath, golfBall.getRadius(), edge);
-                    if (collisionData.time < earliestCollisionData.time) {
+                    if (collisionData.time > 0 &&
+                            collisionData.time < earliestCollisionData.time) {
                         earliestCollisionData = collisionData;
                     }
                 }
@@ -52,6 +49,17 @@ const GameMechanics = function(golfBall, course) {
         const directionAfterCollision = Math.atan2(newDirectionVector.getY(), newDirectionVector.getX());
         earliestCollisionData.directionAfterCollision = directionAfterCollision;
         return(earliestCollisionData);
+    }
+
+    function checkIfCollisionCanHappen(intersectionA, intersectionB) {
+        if ((mUtils.isInRange(intersectionA.edgeParameter, 1, Infinity) && 
+            mUtils.isInRange(intersectionB.edgeParameter, 1, Infinity)) ||
+            (mUtils.isInRange(intersectionA.edgeParameter, -Infinity, 0) && 
+            mUtils.isInRange(intersectionB.edgeParameter, -Infinity, 0))) {
+                return(false);
+            }
+        return(mUtils.isInRange(intersectionA.pathParameter, 0, Infinity) ||
+               mUtils.isInRange(intersectionB.pathParameter, 0, Infinity))
     }
     
     function step(timeStep) {
