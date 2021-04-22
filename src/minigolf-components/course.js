@@ -7,6 +7,7 @@ const mUtils = require('../utilities/math-utilities')
 const Course = function(courseData) {
     const boundaryVertices = courseData.boundary;
     const obstacles = courseData.obstacles;
+    const covers = courseData.covers;
     const holePosition = mUtils.Vector(courseData.hole.position);
     const holeRadius = courseData.hole.radius;
 
@@ -24,6 +25,7 @@ const Course = function(courseData) {
             edges.push(mUtils.Edge(mUtils.Vector({x: a.x, y: a.y}), 
                                    mUtils.Vector({x: b.x, y: b.y})));
         }
+        
         if (obstacles) {
             obstacles.forEach(obstacleVertices => {
                 const obstacleVerticesLooped = [...obstacleVertices];
@@ -36,7 +38,18 @@ const Course = function(courseData) {
                 }
             });
         }
-    
+        
+        if (covers) {
+            covers.forEach(cover => {
+                cover.AABB = cover.vertices.reduce((coverAABB, curVertex) => {
+                    coverAABB.xMin = Math.min(curVertex.x, coverAABB.xMin);
+                    coverAABB.xMax = Math.max(curVertex.x, coverAABB.xMax);
+                    coverAABB.yMin = Math.min(curVertex.y, coverAABB.yMin);
+                    coverAABB.yMax = Math.max(curVertex.y, coverAABB.yMax);
+                    return(coverAABB);
+                }, {xMin: Infinity, xMax: -Infinity, yMin: Infinity, yMax: -Infinity});
+            });
+        }
     }
 
     function getBoundaryVertices() {
@@ -55,8 +68,20 @@ const Course = function(courseData) {
         return({position: holePosition, radius: holeRadius});
     }
 
+    function getCoversAtPosition(position) {
+        const result = [];
+        if (covers) {
+            covers.forEach(cover => {
+                if (mUtils.isPointInPolygon(position, cover.vertices)) {
+                    result.push(cover);
+                }
+            });
+        }
+        return(result);
+    }
+
     return({ getBoundaryVertices, getObstacles, getEdges,
-        getHole });
+        getHole, getCoversAtPosition });
 };
 
 module.exports = Course;

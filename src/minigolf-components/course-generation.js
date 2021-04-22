@@ -4,18 +4,18 @@ function generateCourse() {
     if (i === 0) {
         courseData = {
             boundary: [
-            {x: 10, y: 40},
-            {x: 30, y: 40},
-            {x: 30, y: 45},
-            {x: 65, y: 45},
-            {x: 65, y: 40},
-            {x: 90, y: 40},
-            {x: 90, y: 60},
-            {x: 65, y: 60},
-            {x: 65, y: 55},
-            {x: 30, y: 55},
-            {x: 30, y: 60},
-            {x: 10, y: 60}
+                {x: 10, y: 40},
+                {x: 30, y: 40},
+                {x: 30, y: 45},
+                {x: 65, y: 45},
+                {x: 65, y: 40},
+                {x: 90, y: 40},
+                {x: 90, y: 60},
+                {x: 65, y: 60},
+                {x: 65, y: 55},
+                {x: 30, y: 55},
+                {x: 30, y: 60},
+                {x: 10, y: 60}
             ],
             obstacles: [
                 [
@@ -25,7 +25,34 @@ function generateCourse() {
                     {x: 15, y: 45}
                 ]
             ],
-            initialGolfBallPosition: {x: 80, y: 50},
+            covers: [
+                {
+                    type: 'sand', 
+                    frictionMultiplier: 5, 
+                    vertices: [{x: 65, y: 52},
+                               {x: 65, y: 55},
+                               {x: 30, y: 55},
+                               {x: 30, y: 52}]
+                },
+            
+                {
+                    type: 'water',
+                    vertices: [{x: 65, y: 48},
+                               {x: 65, y: 52},
+                               {x: 30, y: 52},
+                               {x: 30, y: 48}]
+                },
+            
+                {
+                    type: 'wind',
+                    windStrength: 10,
+                    vertices: [{x: 65, y: 45},
+                               {x: 65, y: 48},
+                               {x: 30, y: 48},
+                               {x: 30, y: 45}]
+                }
+            ],
+            initialGolfBallPosition: {x: 80, y: 50}, golfBallRadius: 0.8,
             hole: {position: {x: 12.5, y: 50}, radius: 2.1}
             };
     } else {

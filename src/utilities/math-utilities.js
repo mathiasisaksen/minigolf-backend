@@ -261,7 +261,38 @@ function computeMovingCircleEdgeIntersection(path, radius, edge) {
     return({time, collisionCenter, collisionPoint});
 }
 
+function isPointInPolygon(pointPosition, polygonVertices, polygonAABB) {
+    const pX = pointPosition.x;
+    const pY = pointPosition.y;
+
+    if (polygonAABB) {
+        const isInsideAABB = (pX >= polygonAABB.xMin &&
+                              pX <= polygonAABB.xMax &&
+                              pY >= polygonAABB.yMin &&
+                              pY <= polygonAABB.yMax);
+        if (!isInsideAABB) {
+            return(false);
+        }
+    }
+
+    // Add first vertex to end to create loop
+    polygonVertices.push[polygonVertices[0]];
+
+    // Use ray casting method
+    let isInPolygon = false;
+    for (let i = 0; i < polygonVertices.length - 1; i++) {
+        const a = polygonVertices[i];
+        const b = polygonVertices[i + 1];
+        if ((pY - a.y)*(pY - b.y) < 0 && a.x < pX && b.x < pX) {
+            isInPolygon = !isInPolygon;
+        }
+    }
+    return(isInPolygon);
+}
+
+
 module.exports = { Vector, dotProduct, crossProduct2D, addVectors, VectorDistance,
     subtractVectors, scaleVector, createUnitVector, vectorProjection,
     vectorReflection, Edge, Path, computePathEdgeIntersection, 
-    getParallelPaths, isInRange, computeMovingCircleEdgeIntersection };
+    getParallelPaths, isInRange, computeMovingCircleEdgeIntersection,
+    isPointInPolygon };

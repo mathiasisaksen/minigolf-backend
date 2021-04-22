@@ -9,8 +9,8 @@ const wss = new WebSocket.Server({
 
 wss.on('listening', () => console.log(`Server started and listening on port ${wss.options.port}`));
 
-wss.on('connection', ws => {
-    console.log(wss.clients.size);
+wss.on('connection', (ws, req) => {
+    console.log(req.socket.remoteAddress);
     ws.on('message', message => messageHandler(ws, message));
 });
 

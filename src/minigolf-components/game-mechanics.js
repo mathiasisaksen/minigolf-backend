@@ -76,26 +76,56 @@ const GameMechanics = function(golfBall, course) {
         // to the collision, and a post-collision step using the remaining time
         if (nextStepLength > distanceToCollision) {
             // Partial step
-            const partialStepTime = distanceToCollision / golfBall.getSpeed();
-            golfBall.step(partialStepTime);
+            const partialTimeStep = distanceToCollision / golfBall.getSpeed();
+            performGolfBallStep(partialTimeStep);
 
             // Change direction due to collision, and perform rest of step
             golfBall.setDirection(collisionData.directionAfterCollision);
-            const remainingStepTime = timeStep - partialStepTime;
+            const remainingTimeStep = timeStep - partialTimeStep;
             collisionData = null;
             checkIfWon();
 
-            step(remainingStepTime);
+            step(remainingTimeStep);
         } else {
-            golfBall.step(timeStep);
-            const oldSpeed = golfBall.getSpeed();
-            const newSpeed = (1 - gameConfig.frictionPerTime*timeStep)*oldSpeed;
-            golfBall.setSpeed(newSpeed);
-            if (golfBall.getSpeed() < gameConfig.speedThreshold) {
+            performGolfBallStep(timeStep);
+            if (golfBall.getSpeed() < gameConfig.relativeSpeedThreshold*golfBall.getRadius()) {
                 golfBall.setSpeed(0);
                 isRunning = false;
             }
             checkIfWon();
+        }
+    }
+
+    function performGolfBallStep(timeStep) {
+        
+        golfBall.step(timeStep);
+        const allCovers = course.getCoversAtPosition(golfBall.getPosition().getCoordinates());
+        if (allCovers.length > 0) {
+            handleGolfBallOnCover(allCovers[0], timeStep);
+            return;
+        }
+
+        const oldSpeed = golfBall.getSpeed();
+        const frictionCoeff = - Math.log(1 - gameConfig.frictionPerTime);
+        const newSpeed = (1 - frictionCoeff*timeStep)*oldSpeed;
+        golfBall.setSpeed(newSpeed);
+
+    }
+
+    function handleGolfBallOnCover(cover, timeStep) {
+        const oldSpeed = golfBall.getSpeed();
+        if (cover.type === 'sand') {
+            const frictionCoeff = - Math.log(1 - gameConfig.frictionPerTime);
+            const newSpeed = 
+                (1 - cover.frictionMultiplier*frictionCoeff*timeStep)*oldSpeed;
+            golfBall.setSpeed(newSpeed);
+        } else if (cover.type === 'water') {
+            golfBall.setSpeed(0);
+            isRunning = false;
+            golfBall.moveToInitialPosition();
+        } else if (cover.type === 'wind') {
+            const speedChange = timeStep*cover.windStrength;
+            golfBall.setSpeed(oldSpeed + speedChange);
         }
     }
 
