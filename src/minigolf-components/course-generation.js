@@ -42,6 +42,14 @@ function generateCourse() {
                                {x: 30, y: 52},
                                {x: 30, y: 48}]
                 },
+
+                {
+                    type: 'bridge',
+                    vertices: [{x: 67, y: 49},
+                               {x: 67, y: 51},
+                               {x: 28, y: 51},
+                               {x: 28, y: 49}]
+                },
             
                 {
                     type: 'wind',

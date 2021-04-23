@@ -61,7 +61,7 @@ const GameMechanics = function(golfBall, course) {
         return(mUtils.isInRange(intersectionA.pathParameter, 0, Infinity) ||
                mUtils.isInRange(intersectionB.pathParameter, 0, Infinity))
     }
-    
+
     function step(timeStep) {
         if (!collisionData) {
             collisionData = computeNextCollision();
@@ -114,7 +114,11 @@ const GameMechanics = function(golfBall, course) {
 
     function handleGolfBallOnCover(cover, timeStep) {
         const oldSpeed = golfBall.getSpeed();
-        if (cover.type === 'sand') {
+        if (cover.type === 'bridge') {
+            const frictionCoeff = - Math.log(1 - gameConfig.frictionPerTime);
+            const newSpeed = (1 - frictionCoeff*timeStep)*oldSpeed;
+            golfBall.setSpeed(newSpeed);
+        } else if (cover.type === 'sand') {
             const frictionCoeff = - Math.log(1 - gameConfig.frictionPerTime);
             const newSpeed = 
                 (1 - cover.frictionMultiplier*frictionCoeff*timeStep)*oldSpeed;
