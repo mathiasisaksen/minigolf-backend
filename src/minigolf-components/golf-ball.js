@@ -3,10 +3,13 @@ const mUtils = require('../utilities/math-utilities');
 
 const GolfBall = function(courseData) {
     
-    let position = mUtils.Vector(courseData.initialGolfBallPosition);
+    let {initialPosition, radius} = courseData.golfBall;
+    let position = mUtils.Vector(initialPosition);
     let speed;
     let direction;
-    let radius = courseData.golfBallRadius || gameConfig.golfBallRadius;
+    if (!radius) {
+        radius = gameConfig.golfBallRadius;
+    }
     let _unitDirectionVector;
 
     function getPosition() {
@@ -51,7 +54,7 @@ const GolfBall = function(courseData) {
     }
 
     function moveToInitialPosition() {
-        position = mUtils.Vector(courseData.initialGolfBallPosition);
+        position = mUtils.Vector(initialPosition);
     }
 
     function reset() {

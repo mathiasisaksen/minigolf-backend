@@ -18,7 +18,8 @@ function handleExecutePutt(webSocket, data) {
         return;
     }
 
-    const speed = Math.min(data.golfBallSpeed, gameConfig.maxSpeed);
+    const golfBall = onlineGame.getGolfBall();
+    const speed = Math.min(data.golfBallSpeed, golfBall.getRadius() * gameConfig.relativeMaxSpeed);
     const direction = data.golfBallDirection;
 
     const player = ServerState.getPlayerById(playerId);

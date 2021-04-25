@@ -275,15 +275,17 @@ function isPointInPolygon(pointPosition, polygonVertices, polygonAABB) {
         }
     }
 
-    // Add first vertex to end to create loop
-    polygonVertices.push[polygonVertices[0]];
-
     // Use ray casting method
     let isInPolygon = false;
-    for (let i = 0; i < polygonVertices.length - 1; i++) {
-        const a = polygonVertices[i];
-        const b = polygonVertices[i + 1];
-        if ((pY - a.y)*(pY - b.y) < 0 && a.x < pX && b.x < pX) {
+    const nVertices = polygonVertices.length;
+    for (let i = 0, j = nVertices - 1; i < nVertices; j = i++) {
+        let a = polygonVertices[i];
+        let b = polygonVertices[j];
+        if (a.y > b.y) {
+            [a, b] = [b, a];
+        }
+        if (((pY > a.y) !== (pY > b.y)) && 
+            ((pX - a.x)*(b.y - a.y) < (pY - a.y)*(b.x - a.x))) {
             isInPolygon = !isInPolygon;
         }
     }

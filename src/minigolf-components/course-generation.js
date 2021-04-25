@@ -60,12 +60,13 @@ function generateCourse() {
                                {x: 30, y: 45}]
                 }
             ],
-            initialGolfBallPosition: {x: 80, y: 50}, golfBallRadius: 0.8,
+            golfBall: {initialPosition: {x: 80, y: 50}, radius: 0.8},
             hole: {position: {x: 12.5, y: 50}, radius: 2.1}
             };
     } else {
         courseData = {boundary: 
-            [{x: 88.38, y: 37.15},
+            [
+                {x: 88.38, y: 37.15},
                 {x: 84.15, y: 48.92},
                 {x: 72.43, y: 61.96},
                 {x: 55.25, y: 68.69},
@@ -82,8 +83,9 @@ function generateCourse() {
                 {x: 53.69, y: 56.27},
                 {x: 64.4, y: 52.28},
                 {x: 71.5, y: 45.55},
-                {x: 75.56, y: 37.12}], 
-            initialGolfBallPosition: {x: 80, y: 40},
+                {x: 75.56, y: 37.12}
+            ], 
+            golfBall: {initialPosition: {x: 80, y: 40}, radius: 0.6},
             hole: {position: {x: 86, y: 33.4}, radius: 1.5}};
     }
     i++;

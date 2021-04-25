@@ -1,6 +1,7 @@
 const ServerState = require("../server-state");
 const { generateId, checkValidId } = require('../utilities/client-utilities')
 const { idConfig, playerConfig } = require('../config');
+const CourseLoader = require("../minigolf-components/course-loader");
 
 function handleNewOnlineGame(webSocket, data) {
     const response = {data: {}};
@@ -8,6 +9,7 @@ function handleNewOnlineGame(webSocket, data) {
     let gameId = data.gameId;
     const isGameIdSpecified = data.isGameIdSpecified;
     let numberOfCourses = data.numberOfCourses;
+    let numberOfCoursesAvaliable = CourseLoader.getNumberOfCourses();
 
     response.eventName = 'gameCreationFailed';
     if (!playerName) {
@@ -20,6 +22,9 @@ function handleNewOnlineGame(webSocket, data) {
         response.data.errorDescription = 'Game ID already in use';
     } else if (!numberOfCourses || numberOfCourses < 1) {
         response.data.errorDescription = 'Invalid number of holes';
+    } else if (numberOfCourses > numberOfCoursesAvaliable) {
+        response.data.errorDescription = 
+        `There are only ${numberOfCoursesAvaliable} holes available, please try again`;;
     } else {
         response.eventName = 'gameCreationSuccessful';
         const playerId = generateId(idConfig.numberOfCharacters);
@@ -30,10 +35,11 @@ function handleNewOnlineGame(webSocket, data) {
 
         onlineGame.addPlayer(player);
         onlineGame.setCurrentPlayer(player);
-        onlineGame.generateNewCourse();
+        onlineGame.prepareCourses(numberOfCourses);
+        onlineGame.prepareNextCourse();
         player.setOnlineGame(onlineGame);
 
-        onlineGame.setNumberOfCourses(numberOfCourses);
+        
 
         response.data = onlineGame.getGameData();
         response.data.playerId = playerId;

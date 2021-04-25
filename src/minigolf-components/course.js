@@ -12,9 +12,39 @@ const Course = function(courseData) {
     const holeRadius = courseData.hole.radius;
 
     let edges = [];
-    computeEdges();
+    initialize();
 
-    function computeEdges() {
+    function fixVertexOrientation() {
+        if (computePolygonOrientation(boundaryVertices) < 0) {
+            boundaryVertices.reverse();
+        }
+        if (obstacles) {
+            obstacles.forEach(obstacle => {
+                if (computePolygonOrientation(obstacle) > 0) {
+                    obstacle.reverse();
+                }
+            });
+        }
+    }
+
+    // Uses approach from https://en.wikipedia.org/wiki/Curve_orientation
+    function computePolygonOrientation(polygon) {
+        const minXIndex = polygon.reduce((minIndex, curElem, curIndex, arr) => 
+            minIndex = curElem.x < arr[minIndex].x ? curIndex : minIndex, 
+            0);
+        const prevIndex = minXIndex === 0 ? polygon.length - 1 : minXIndex - 1;
+        const nextIndex = minXIndex === polygon.length - 1 ? 0 : minXIndex + 1;
+
+        const vertexA = polygon[prevIndex];
+        const vertexB = polygon[minXIndex];
+        const vertexC = polygon[nextIndex];
+
+        const determinant = (vertexB.x - vertexA.x)*(vertexC.y - vertexA.y) -
+                            (vertexC.x - vertexA.x)*(vertexB.y - vertexA.y)
+        return(Math.sign(determinant));
+    }
+
+    function computeEdgesAndAABB() {
         const boundaryVerticesLooped = [...boundaryVertices];
         boundaryVerticesLooped.push(boundaryVerticesLooped[0]);
     
@@ -52,6 +82,12 @@ const Course = function(courseData) {
         }
     }
 
+    function initialize() {
+        fixVertexOrientation();
+        orderCovers();
+        computeEdgesAndAABB();
+    }
+
     function getBoundaryVertices() {
         return(boundaryVertices);
     }
@@ -66,6 +102,13 @@ const Course = function(courseData) {
 
     function getHole() {
         return({position: holePosition, radius: holeRadius});
+    }
+
+    function orderCovers() {
+        const priority = gameConfig.coverPriority;
+        if (covers) {
+            covers.sort((a, b) => priority[a.type] - priority[b.type]);
+        }
     }
 
     function getCoversAtPosition(position) {

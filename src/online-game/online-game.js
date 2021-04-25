@@ -3,6 +3,7 @@ const GameMechanics = require('../minigolf-components/game-mechanics');
 const Course = require('../minigolf-components/course');
 const GolfBall = require('../minigolf-components/golf-ball');
 const ScoreBoard = require('./score-board');
+const CourseLoader = require('../minigolf-components/course-loader');
 
 function OnlineGame(gameId, removeCallback) {
     const players = [];
@@ -14,6 +15,8 @@ function OnlineGame(gameId, removeCallback) {
     let courseData;
     let course;
     let golfBall;
+
+    let courseArray;
 
     function getId() {
         return(gameId);
@@ -82,7 +85,7 @@ function OnlineGame(gameId, removeCallback) {
         currentPlayerIndex++;
         if (currentPlayerIndex === players.length) {
             currentPlayerIndex = 0;
-            generateNewCourse();
+            prepareNextCourse();
         } else {
             golfBall.moveToInitialPosition();
         }
@@ -101,17 +104,25 @@ function OnlineGame(gameId, removeCallback) {
         return(courseData);
     }
 
-    function generateNewCourse() {
+    function prepareCourses(numberOfCourses) {
+        courseArray = CourseLoader.getRandomCourses(numberOfCourses);
+        setNumberOfCourses(courseArray.length);
+    }
+
+    function prepareNextCourse() {
         currentCourseNumber++;
         if (currentCourseNumber > totalNumberOfCourses) {
             isGameFinished = true;
             return;
         }
-        courseData = generateCourse();
+        loadNextCourse();
         course = Course(courseData);
         golfBall = GolfBall(courseData);
         gameMechanics = GameMechanics(golfBall, course);
-        // TODO: WS call to all clients
+    }
+
+    function loadNextCourse() {
+        courseData = CourseLoader.getCourseByFilename(courseArray[currentCourseNumber - 1]);
     }
 
     function computePuttResult() {
@@ -135,10 +146,6 @@ function OnlineGame(gameId, removeCallback) {
 
         puttResult.isGameFinished = isGameFinished;
         return(puttResult);
-        // If puttResult.isFinished is true, go to next player
-        // and share with clients. If not, let player do next
-        // putt. The position is shared and each client updates
-        // based on it
     }
 
     function getPlayerNames() {
@@ -156,6 +163,10 @@ function OnlineGame(gameId, removeCallback) {
         data.courseData = courseData;
         data.golfBallPosition = golfBall.getPosition().getCoordinates();
         return(data);
+    }
+
+    function getGolfBall() {
+        return(golfBall);
     }
 
     function setGolfBallVelocity(speed, direction) {
@@ -177,11 +188,11 @@ function OnlineGame(gameId, removeCallback) {
 
     const game = { getId, 
         addPlayer, removePlayer, 
-        getCourseData, generateNewCourse,
+        getCourseData, prepareNextCourse,
         computePuttResult, isPlayerNameInUse, getGameData,
-        broadcast, setCurrentPlayer, setGolfBallVelocity,
+        broadcast, setCurrentPlayer, setGolfBallVelocity, getGolfBall,
         setNumberOfCourses, getCurrentPlayer, getCourseNumber,
-        getScoreArray, getNumberOfCourses };
+        getScoreArray, getNumberOfCourses, prepareCourses };
     return(game)
 }
 
