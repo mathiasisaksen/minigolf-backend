@@ -1,7 +1,6 @@
 const ServerState = require("../server-state");
 
 function handleMessageSent(webSocket, data) {
-    console.log('message received', data.message);
     const message = {data: {}};
     const playerId = data.playerId;
     const gameId = data.gameId.toLowerCase();

@@ -82,9 +82,14 @@ const Course = function(courseData) {
         }
     }
 
+    function sortCovers() {
+        covers.sort((a, b) => 
+            gameConfig.coverPriority[a.type] - gameConfig.coverPriority[b.type]);
+    }
+
     function initialize() {
         fixVertexOrientation();
-        orderCovers();
+        sortCovers();
         computeEdgesAndAABB();
     }
 
@@ -104,24 +109,12 @@ const Course = function(courseData) {
         return({position: holePosition, radius: holeRadius});
     }
 
-    function orderCovers() {
-        const priority = gameConfig.coverPriority;
-        if (covers) {
-            covers.sort((a, b) => priority[a.type] - priority[b.type]);
-        }
-    }
-
     function getCoversAtPosition(position) {
         const result = [];
         if (covers) {
             covers.forEach(cover => {
                 if (mUtils.isPointInPolygon(position, cover.vertices)) {
-                    // Ensure that the bridge cover always comes first
-                    if (cover.type === 'bridge') {
-                        result.unshift(cover);
-                    } else {
-                        result.push(cover);
-                    }
+                    result.push(cover);
                 }
             });
         }

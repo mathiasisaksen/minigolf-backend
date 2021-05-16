@@ -7,7 +7,7 @@ const gameConfig = {
     framesPerSecond: 60,
     gravity: Infinity,
     interpolationsPerStep: 5,
-    coverPriority: {bridge: 1, water: 2, sand: 3, wind: 4}
+    coverPriority: {wind: 1, bridge: 2, water: 3, sand: 4}
 };
 
 const idConfig = {

@@ -114,7 +114,10 @@ const GameMechanics = function(golfBall, course) {
 
     function handleGolfBallOnCover(cover, timeStep) {
         const oldSpeed = golfBall.getSpeed();
-        if (cover.type === 'bridge') {
+        if (cover.type === 'wind') {
+            const speedChange = timeStep*cover.windStrength*golfBall.getRadius();
+            golfBall.setSpeed(oldSpeed + speedChange);
+        } else if (cover.type === 'bridge') {
             const frictionCoeff = - Math.log(1 - gameConfig.frictionPerTime);
             const newSpeed = (1 - frictionCoeff*timeStep)*oldSpeed;
             golfBall.setSpeed(newSpeed);
@@ -122,15 +125,11 @@ const GameMechanics = function(golfBall, course) {
             const frictionCoeff = - Math.log(1 - gameConfig.frictionPerTime);
             const newSpeed = 
                 (1 - cover.frictionMultiplier*frictionCoeff*timeStep)*oldSpeed;
-
             golfBall.setSpeed(newSpeed);
         } else if (cover.type === 'water') {
             golfBall.setSpeed(0);
             isRunning = false;
             golfBall.moveToInitialPosition();
-        } else if (cover.type === 'wind') {
-            const speedChange = timeStep*cover.windStrength*golfBall.getRadius();
-            golfBall.setSpeed(oldSpeed + speedChange);
         }
     }
 
