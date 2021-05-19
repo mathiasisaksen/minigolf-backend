@@ -10,6 +10,10 @@ const CourseLoader = (() => {
 
     function updateCourseArray() {
         courseArray = fs.readdirSync(COURSE_PATH);
+        courseArray = courseArray.filter(filename => filename
+            .split('.')
+            .pop()
+            .toLowerCase() === "json");
         courseArray.sort((a, b) => {
             const aNum = parseInt(a.split('.')[0]);
             const bNum = parseInt(b.split('.')[0]);

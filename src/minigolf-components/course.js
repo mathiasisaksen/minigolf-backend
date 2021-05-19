@@ -83,8 +83,10 @@ const Course = function(courseData) {
     }
 
     function sortCovers() {
-        covers.sort((a, b) => 
-            gameConfig.coverPriority[a.type] - gameConfig.coverPriority[b.type]);
+        if (covers) {
+            covers.sort((a, b) => 
+                gameConfig.coverPriority[a.type] - gameConfig.coverPriority[b.type]);
+        }
     }
 
     function initialize() {
