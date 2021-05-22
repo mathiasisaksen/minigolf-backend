@@ -10,6 +10,7 @@ const GolfBall = function(courseData) {
     if (!radius) {
         radius = gameConfig.golfBallRadius;
     }
+    let maxSpeed = radius * gameConfig.relativeMaxSpeed;
     let _unitDirectionVector;
 
     function getPosition() {
@@ -25,7 +26,7 @@ const GolfBall = function(courseData) {
     }
 
     function setSpeed(newSpeed) {
-        speed = newSpeed;
+        speed = Math.min(newSpeed, maxSpeed);
     }
 
     function getDirection() {
@@ -43,6 +44,7 @@ const GolfBall = function(courseData) {
 
     function setRadius(newRadius) {
         radius = newRadius;
+        maxSpeed = radius * gameConfig.relativeMaxSpeed;
     }
 
     function step(timeStep) {
