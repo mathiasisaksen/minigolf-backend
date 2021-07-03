@@ -53,7 +53,7 @@
   ],
   "covers": [
     {
-      "frictionMultiplier": 10,
+      "frictionMultiplier": 15,
       "vertices": [
         {
           "x": 15.403510093688965,
@@ -75,7 +75,7 @@
       "type": "sand"
     },
     {
-      "frictionMultiplier": 10,
+      "frictionMultiplier": 15,
       "vertices": [
         {
           "x": 52.04960632324219,

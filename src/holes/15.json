@@ -72,7 +72,7 @@
   "covers": [
     {
       "type": "sand",
-      "frictionMultiplier": 5,
+      "frictionMultiplier": 15,
       "vertices": [
         {
           "x": 65,

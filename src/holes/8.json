@@ -448,7 +448,7 @@
       "type": "wind"
     },
     {
-      "frictionMultiplier": 30,
+      "frictionMultiplier": 15,
       "vertices": [
         {
           "x": 136.3643035888672,
@@ -654,7 +654,7 @@
       "type": "sand"
     },
     {
-      "frictionMultiplier": 30,
+      "frictionMultiplier": 15,
       "vertices": [
         {
           "x": 589.8862915039062,

@@ -1,6 +1,6 @@
 const gameConfig = {
     golfBallRadius: 0.8,
-    relativeMaxSpeed: 50,
+    relativeMaxSpeed: 60,
     frictionPerTime: 0.4,
     relativeSpeedThreshold: 1.6,
     maxDirectionLineLength: 20,

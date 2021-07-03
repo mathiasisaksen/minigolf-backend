@@ -401,7 +401,7 @@
   ],
   "covers": [
     {
-      "frictionMultiplier": 40,
+      "frictionMultiplier": 15,
       "vertices": [
         {
           "x": 115.52594757080078,
