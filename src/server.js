@@ -5,7 +5,7 @@ const { serverConfig } = require('./config');
 const { messageHandler } = require('./message-handler');
 
 const httpsServer = https.createServer({
-    cert: fs.readFileSync('./src/tls/cert.pem'),
+    cert: fs.readFileSync('./src/tls/fullchain.pem'),
     key: fs.readFileSync('./src/tls/privkey.pem')
 });
 
